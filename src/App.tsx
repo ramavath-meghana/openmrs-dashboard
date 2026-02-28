@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import './App.css'
 
 type Severity = 'critical' | 'high' | 'medium' | 'low' | 'none' | 'unknown'
@@ -677,30 +677,34 @@ function normalizeRawReport(raw: unknown, source: RepoSource): RepoReport {
   const dependenciesRaw = (data.dependencies as unknown) ?? []
   const depsArray = Array.isArray(dependenciesRaw) ? dependenciesRaw : []
 
-  const dependencies: Dependency[] = depsArray.map((item) => {
-    const dep = item as Record<string, unknown>
-    const nameValue =
-      (typeof dep.name === 'string' && dep.name) ||
-      (typeof dep.package === 'string' && dep.package) ||
-      'Unknown dependency'
+  const dependencies: Dependency[] = []
 
-    const versionValue =
-      (typeof dep.version === 'string' && dep.version) ||
-      (typeof dep.currentVersion === 'string' && dep.currentVersion) ||
-      undefined
+  if (depsArray.length > 0) {
+    // Generic format with explicit dependencies array
+    depsArray.forEach((item) => {
+      const dep = item as Record<string, unknown>
+      const nameValue =
+        (typeof dep.name === 'string' && dep.name) ||
+        (typeof dep.package === 'string' && dep.package) ||
+        'Unknown dependency'
 
-    const cvesRaw = (dep.cves ?? dep.vulnerabilities) as unknown
-    const cvesArr = Array.isArray(cvesRaw) ? cvesRaw : []
+      const versionValue =
+        (typeof dep.version === 'string' && dep.version) ||
+        (typeof dep.currentVersion === 'string' && dep.currentVersion) ||
+        undefined
 
-    const cves: Cve[] = cvesArr
-      .map((cveRaw) => {
+      const cvesRaw = (dep.cves ?? dep.vulnerabilities) as unknown
+      const cvesArr = Array.isArray(cvesRaw) ? cvesRaw : []
+      const cves: Cve[] = []
+
+      cvesArr.forEach((cveRaw) => {
         const cve = cveRaw as Record<string, unknown>
         const id =
           (typeof cve.id === 'string' && cve.id) ||
           (typeof cve.cveId === 'string' && cve.cveId) ||
           (typeof cve.identifier === 'string' && cve.identifier)
 
-        if (!id) return null
+        if (!id) return
 
         const numericScore =
           typeof cve.score === 'number'
@@ -728,7 +732,7 @@ function normalizeRawReport(raw: unknown, source: RepoSource): RepoReport {
           (typeof cve.url === 'string' && cve.url) ||
           undefined
 
-        return {
+        cves.push({
           id,
           summary:
             (typeof cve.summary === 'string' && cve.summary) ||
@@ -738,16 +742,119 @@ function normalizeRawReport(raw: unknown, source: RepoSource): RepoReport {
           severity: severity ? normalizeSeverity(severity, numericScore) : undefined,
           fixedIn: fixedIn as string | string[] | undefined,
           source: sourceField,
-        }
+        })
       })
-      .filter((cve): cve is Cve => cve !== null)
 
-    return {
-      name: nameValue,
-      version: versionValue,
-      cves,
+      dependencies.push({
+        name: nameValue,
+        version: versionValue,
+        cves,
+      })
+    })
+  } else {
+    // GitLab dependency-scanning style: vulnerabilities array with location.dependency.package
+    const vulnerabilitiesRaw = (data.vulnerabilities as unknown) ?? []
+    const vulnerabilities = Array.isArray(vulnerabilitiesRaw) ? vulnerabilitiesRaw : []
+
+    const depsByKey = new Map<string, Dependency>()
+
+    const approximateScoreBySeverity: Record<Severity, number> = {
+      critical: 9.8,
+      high: 8.0,
+      medium: 6.0,
+      low: 3.0,
+      none: 0,
+      unknown: 0,
     }
-  })
+
+    vulnerabilities.forEach((vulnRaw) => {
+      const vuln = vulnRaw as Record<string, unknown>
+      const location = vuln.location as Record<string, unknown> | undefined
+      const dependencyInfo = (location?.dependency as Record<string, unknown> | undefined) ?? {}
+      const packageInfo = (dependencyInfo.package as Record<string, unknown> | undefined) ?? {}
+
+      const pkgName =
+        (typeof packageInfo.name === 'string' && packageInfo.name) ||
+        (typeof dependencyInfo.name === 'string' && dependencyInfo.name)
+
+      if (!pkgName) {
+        return
+      }
+
+      const versionValue =
+        (typeof dependencyInfo.version === 'string' && dependencyInfo.version) || undefined
+
+      const key = `${pkgName}@${versionValue ?? 'unknown'}`
+
+      let dep = depsByKey.get(key)
+      if (!dep) {
+        dep = {
+          name: pkgName,
+          version: versionValue,
+          cves: [],
+        }
+        depsByKey.set(key, dep)
+      }
+
+      const identifiersRaw = (vuln.identifiers as unknown) ?? []
+      const identifiers = Array.isArray(identifiersRaw) ? identifiersRaw : []
+
+      let derivedId: string | undefined =
+        (typeof vuln.id === 'string' && vuln.id) ||
+        (typeof vuln.name === 'string' && vuln.name) ||
+        undefined
+
+      if (!derivedId) {
+        const cveIdentifier = identifiers.find((item) => {
+          const obj = item as Record<string, unknown>
+          const type = typeof obj.type === 'string' ? obj.type : ''
+          const name = typeof obj.name === 'string' ? obj.name : ''
+          return type.toUpperCase().includes('CVE') || name.toUpperCase().startsWith('CVE-')
+        }) as Record<string, unknown> | undefined
+
+        if (cveIdentifier) {
+          const name = typeof cveIdentifier.name === 'string' ? cveIdentifier.name : undefined
+          const value = typeof cveIdentifier.value === 'string' ? cveIdentifier.value : undefined
+          derivedId = name ?? value
+        }
+      }
+
+      if (!derivedId) {
+        return
+      }
+
+      const severityRaw = typeof vuln.severity === 'string' ? vuln.severity : undefined
+      const normalizedSeverity = normalizeSeverity(
+        severityRaw?.toLowerCase() as Severity | undefined,
+        undefined,
+      )
+      const numericScore = approximateScoreBySeverity[normalizedSeverity]
+
+      const linksRaw = (vuln.links as unknown) ?? []
+      const links = Array.isArray(linksRaw) ? linksRaw : []
+      const firstLink = links[0] as Record<string, unknown> | undefined
+      const linkUrl =
+        (firstLink && typeof firstLink.url === 'string' && firstLink.url) || undefined
+
+      const cve: Cve = {
+        id: derivedId,
+        summary:
+          (typeof vuln.description === 'string' && vuln.description) ||
+          (typeof vuln.message === 'string' && vuln.message) ||
+          undefined,
+        score: numericScore,
+        severity: normalizedSeverity,
+        fixedIn: undefined,
+        source: linkUrl,
+      }
+
+      dep.cves.push(cve)
+    })
+
+    depsByKey.forEach((dep) => {
+      dependencies.push(dep)
+    })
+  }
 
   return {
     id: source.id,
