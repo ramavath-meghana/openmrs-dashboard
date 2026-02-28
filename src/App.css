@@ -1,0 +1,418 @@
+.dashboard-root {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.75rem 2rem 2.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.dashboard-kicker {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin: 0 0 0.25rem;
+}
+
+.dashboard-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #f9fafb;
+  margin: 0;
+}
+
+.dashboard-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dashboard-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.dashboard-sort-label {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.dashboard-sort select {
+  background: transparent;
+  border: none;
+  color: #e5e7eb;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.15rem 0;
+  outline: none;
+}
+
+.dashboard-sort select:focus-visible {
+  outline: 1px solid #4f46e5;
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.summary-card {
+  position: relative;
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+  background: radial-gradient(circle at top left, #111827, #020617 55%);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 0.8);
+}
+
+.summary-card-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #9ca3af;
+  margin: 0 0 0.4rem;
+}
+
+.summary-card-primary {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #f9fafb;
+  margin: 0 0 0.25rem;
+}
+
+.summary-card-secondary {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.summary-card-pill {
+  margin-top: 0.35rem;
+}
+
+.dashboard-panel {
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px dashed rgba(148, 163, 184, 0.6);
+  color: #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.dashboard-panel--muted {
+  color: #9ca3af;
+}
+
+.dashboard-alert {
+  border-radius: 0.75rem;
+  padding: 0.9rem 1rem;
+  background: rgba(127, 29, 29, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  color: #fecaca;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.dashboard-alert-title {
+  font-weight: 600;
+}
+
+.dashboard-alert-body {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+  font-size: 0.78rem;
+  color: #fecaca;
+}
+
+.repo-card {
+  border-radius: 0.9rem;
+  background:
+    linear-gradient(to right, rgba(56, 189, 248, 0.08), transparent 40%),
+    radial-gradient(circle at top left, #020617, #020617 40%, #020617 70%);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.9),
+    0 0 0 1px rgba(15, 23, 42, 0.85);
+}
+
+.repo-card-header {
+  all: unset;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  gap: 1rem;
+}
+
+.repo-card-header:hover {
+  background: linear-gradient(to right, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.6));
+}
+
+.repo-card-header-main {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.repo-name {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+.repo-card-header-meta {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1.25rem;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.repo-card-header-meta span {
+  white-space: nowrap;
+}
+
+.repo-card-header-toggle {
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+.repo-card-body {
+  padding: 0.5rem 1rem 1rem;
+  border-top: 1px solid rgba(31, 41, 55, 0.9);
+  background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.8));
+  border-radius: 0 0 0.9rem 0.9rem;
+}
+
+.repo-card-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.repo-card-toolbar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.toolbar-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+.toolbar-helper {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.table-wrapper {
+  border-radius: 0.7rem;
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.95);
+}
+
+.table-wrapper--embedded {
+  margin-top: 0.4rem;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.data-table thead {
+  background: linear-gradient(to bottom, #020617, #020617);
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.5rem 0.65rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.85);
+}
+
+.data-table th {
+  font-weight: 500;
+  color: #9ca3af;
+  font-size: 0.75rem;
+}
+
+.data-table tbody tr:last-of-type td {
+  border-bottom: none;
+}
+
+.data-table--compact th,
+.data-table--compact td {
+  padding: 0.4rem 0.6rem;
+}
+
+.dependency-row {
+  cursor: pointer;
+}
+
+.dependency-row:hover {
+  background: radial-gradient(circle at left, rgba(30, 64, 175, 0.28), transparent 60%);
+}
+
+.dependency-name {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+}
+
+.dependency-cves-row td {
+  background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.98));
+}
+
+.severity-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.12rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.severity-pill--critical {
+  background: rgba(127, 29, 29, 0.9);
+  color: #fee2e2;
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.45);
+}
+
+.severity-pill--high {
+  background: rgba(180, 83, 9, 0.9);
+  color: #ffedd5;
+  box-shadow: 0 0 0 1px rgba(251, 146, 60, 0.5);
+}
+
+.severity-pill--medium {
+  background: rgba(120, 53, 15, 0.9);
+  color: #fed7aa;
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.55);
+}
+
+.severity-pill--low {
+  background: rgba(22, 101, 52, 0.9);
+  color: #bbf7d0;
+  box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.5);
+}
+
+.severity-pill--none {
+  background: rgba(31, 41, 55, 0.9);
+  color: #e5e7eb;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.45);
+}
+
+.severity-pill--unknown {
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.5);
+}
+
+.empty-state {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.cve-table-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cve-id {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+  white-space: nowrap;
+}
+
+.cve-summary {
+  max-width: 420px;
+  color: #e5e7eb;
+}
+
+@media (max-width: 960px) {
+  .dashboard-root {
+    padding: 1.25rem 1.25rem 2rem;
+  }
+
+  .dashboard-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .repo-card-header {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+
+  .repo-card-header-meta {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-root {
+    padding: 1rem 0.9rem 1.5rem;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .repo-card-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-sort {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
