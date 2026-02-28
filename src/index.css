@@ -3,9 +3,9 @@
     'Segoe UI', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color-scheme: dark;
-  background-color: #0f172a;
-  color: #020617;
+  color-scheme: light;
+  background-color: #f4f4fb;
+  color: #0f172a;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -23,7 +23,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, #e0f2fe, #e5e7eb 35%, #e5e7eb 60%),
+    radial-gradient(circle at top left, #e0f2fe, #eff6ff 35%, #f9fafb 65%),
     linear-gradient(135deg, #e0f2fe 0%, #eef2ff 45%, #fef3c7 100%);
 }
 
